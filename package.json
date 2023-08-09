@@ -1,0 +1,20 @@
+{
+  "name": "mimetes",
+  "version": "0.0.0-alpha.2",
+  "main": "index.js",
+  "type": "module",
+  "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
+  "license": "MIT",
+  "scripts": {
+    "test": "oletus"
+  },
+  "bin": {
+    "mimetes": "./bin/mimetes.cjs"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "localtunnel": "^2.0.2",
+    "oletus": "^4.0.0",
+    "prettier": "^3.0.0"
+  }
+}

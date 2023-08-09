@@ -1,0 +1,11 @@
+Usage: mimetes mime <host> [options]
+
+Run a proxy server to record http requests and responses and create a test suite
+
+Options:
+  -p, --port          The proxy port to mime on (default 8080)
+  -n, --name          The name of the test suite (default "<timestamp>")
+  -d, --report-dir    The directory to save the test suite (default ".")
+  -h, --help          Print usage information
+
+
