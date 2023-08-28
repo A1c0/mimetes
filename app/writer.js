@@ -14,10 +14,13 @@ export class Writer {
   }
 
   /**
+   * Creates a new Writer
+   * @constructor
    * @param name {string} The name of the file
    * @param outputDir {string} The output directory where the file will be stored
+   * @param baseUrl {string} The base url of the server
    */
-  constructor(name, outputDir) {
+  constructor(name, outputDir, baseUrl) {
     this.timestamp = Date.now();
     this.name = name;
     this.first = true;
@@ -25,6 +28,7 @@ export class Writer {
       path.resolve(outputDir, this.filename),
     );
     this.writeStream.write(`{\n${padding(1)}"timestamp": "${this.timestamp}",`);
+    this.writeStream.write(`\n${padding(1)}"baseUrl": "${baseUrl}",`);
     this.writeStream.write(`\n${padding(1)}"requests": [`);
   }
 

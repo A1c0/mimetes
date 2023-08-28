@@ -1,6 +1,6 @@
 {
   "name": "mimetes",
-  "version": "0.0.0-alpha.2",
+  "version": "0.0.0-alpha.3",
   "main": "index.js",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
@@ -8,13 +8,15 @@
   "scripts": {
     "test": "oletus"
   },
-  "bin": {
-    "mimetes": "./bin/mimetes.cjs"
-  },
+  "bin": "./bin/mimetes.cjs",
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "localtunnel": "^2.0.2",
     "oletus": "^4.0.0",
     "prettier": "^3.0.0"
+  },
+  "volta": {
+    "node": "18.17.1",
+    "yarn": "4.0.0-rc.50"
   }
 }

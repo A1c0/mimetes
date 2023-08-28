@@ -3,3 +3,9 @@
 /server.js
 /mock/
 .DS_Store
+# Yarn
+yarn-*.log
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*

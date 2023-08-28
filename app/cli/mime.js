@@ -45,10 +45,24 @@ export const mime = args => {
       `Cannot write to directory '${outputDirPath}'. Use --help for more information.`,
     );
   }
-  const stop = startMimetesServer(host, port, {
-    name,
-    outputDir: outputDirPath,
-  });
+  const excludeMethods = scoopedArgs?.options?.['exclude-methods']?.split(',');
+  const excludePaths = scoopedArgs?.options?.['exclude-paths']?.split(',');
+  const includeMethods = scoopedArgs?.options?.['include-methods']?.split(',');
+  const includePaths = scoopedArgs?.options?.['include-paths']?.split(',');
+  const stop = startMimetesServer(
+    host,
+    port,
+    {
+      name,
+      outputDir: outputDirPath,
+    },
+    {
+      excludeMethods,
+      excludePaths,
+      includeMethods,
+      includePaths,
+    },
+  );
 
   process.on('SIGINT', () => {
     stop();

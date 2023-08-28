@@ -7,5 +7,7 @@ Options:
   -n, --name          The name of the test suite (default "<timestamp>")
   -d, --report-dir    The directory to save the test suite (default ".")
   -h, --help          Print usage information
-
-
+  --exclude-methods    A comma separated list of methods to exclude (default "OPTIONS,HEAD")
+  --exclude-paths      A comma separated list of path globs pattern to exclude
+  --include-methods    A comma separated list of methods to include
+  --include-paths      A comma separated list of paths globs pattern to include
