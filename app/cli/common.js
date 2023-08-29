@@ -1,21 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import url from 'node:url';
 
 import { logger } from '../../lib/console.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
+/* eslint-disable unicorn/no-process-exit */
 export const exitLog = (message, code = 1) => {
   logger.error(message);
   process.exit(code);
 };
+/* eslint-enable */
 
 /**
  * Show a usage document
  *
  * @param docName {string} The name of the usage document to show
- * @returns {void}
+ * @returns {void}@
  */
 export const showUsage = docName => {
   const docPath = path.resolve(__dirname, `../../assets/usage/${docName}.txt`);
@@ -42,10 +45,10 @@ export const parseInt = (propName, value) => {
     exitLog(`Invalid ${propName} value '${value}. Must be an integer.'`);
   }
 
-  return Number.parseInt(value);
+  return Number.parseInt(value, 10);
 };
 
-const parseString = (propName, value) => {
+export const parseString = (propName, value) => {
   if (value === undefined) {
     return undefined;
   }

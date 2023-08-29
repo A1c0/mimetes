@@ -2,10 +2,12 @@ import { Buffer } from 'node:buffer';
 import http from 'node:http';
 
 import { httpRequest } from '../lib/client.js';
-import { globToRegex } from '../lib/glob-to-regex.js';
 import { parseJson } from '../lib/json-parser.js';
-import { memoize } from '../lib/memoize.js';
 import { logRequest, mimetesLog } from './app-logger.js';
+import {
+  bundleGlobPathPredicate,
+  bundleMethodPredicate,
+} from './input-predicate.js';
 import { Writer } from './writer.js';
 
 /**
@@ -28,57 +30,6 @@ export const getBody = request =>
         reject(error);
       });
   });
-
-/**
- * Bundles a predicate depending on including and excluding methods
- * @param includeMethods {string[]|undefined} - the methods to include
- * @param excludeMethods {string[]|undefined} - the methods to exclude
- * @returns {function(string): boolean} - the method predicate
- */
-// TODO: test regex vs includes array method performance
-const bundleMethodPredicate = (includeMethods, excludeMethods) => {
-  if (!includeMethods && !excludeMethods) {
-    return () => true;
-  }
-
-  const excludeRegex = excludeMethods
-    ? `(?:(?!${excludeMethods.join('|')}))`
-    : '';
-  const includeRegex = includeMethods ? `${includeMethods.join('|')}` : '.*';
-  const methodRegex = new RegExp(`^${excludeRegex}${includeRegex}$`);
-
-  // Memoize the method predicate to avoid testing twice the same value
-  return memoize(method => methodRegex.test(method));
-};
-
-const allPass = predicates => value => {
-  for (const predicate of predicates) {
-    if (!predicate(value)) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-const bundleGlobPathPredicate = (includeGlob, excludeGlob) => {
-  if (!includeGlob && !excludeGlob) {
-    return () => true;
-  }
-
-  const excludePredicates = excludeGlob
-    .map(globToRegex)
-    .map(regex => path => !regex.test(path));
-
-  const includePredicates = includeGlob
-    .map(globToRegex)
-    .map(regex => path => regex.test(path));
-
-  const predicates = [...excludePredicates, ...includePredicates];
-
-  // Memoize the method predicate to avoid testing twice the same value
-  return memoize(allPass(predicates));
-};
 
 /**
  * Runs the Mimetes server
@@ -119,7 +70,7 @@ export const startMimetesServer = (
     options.excludePaths,
   );
 
-  const onRequest = async (request, res) => {
+  const onRequest = async (request, response) => {
     const url = request.url;
     const method = request.method;
     const headers = request.headers;
@@ -144,8 +95,8 @@ export const startMimetesServer = (
       });
     }
 
-    res.writeHead(result.statusCode, result.headers);
-    res.end(result.data);
+    response.writeHead(result.statusCode, result.headers);
+    response.end(result.data);
     logRequest(method, listeningBaseUrl, url, result.statusCode);
   };
 

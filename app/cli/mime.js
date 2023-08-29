@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 
 import { groupOptions } from '../../lib/argv-parsing.js';
 import { isValidUrl } from '../../lib/url.js';
 import { startMimetesServer } from '../record-http-server.js';
-import { exitLog, parseInt, showUsage } from './common.js';
+import { exitLog, parseInt, parseString, showUsage } from './common.js';
 
 /**
  * The mime command.
@@ -38,7 +39,7 @@ export const mime = args => {
   }
 
   const port = parseInt('port', scoopedArgs?.options?.port) ?? 8080;
-  const name = scoopedArgs?.options?.name ?? 'mimetes-' + Date.now();
+  const name = parseString(scoopedArgs?.options?.name) + '-' + Date.now();
   const outputDir = scoopedArgs?.options?.['report-dir'] ?? '.';
   const outputDirPath = path.resolve(process.cwd(), outputDir);
   try {

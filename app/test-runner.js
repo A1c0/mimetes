@@ -23,7 +23,7 @@ import { parseJson } from '../lib/json-parser.js';
  * @param testSuite {TestSuite} - the test suite to run
  * @param options {Options} - the options
  */
-const runTest = async (testSuite, options = {}) => {
+export const runTest = async (testSuite, options = {}) => {
   const baseUrl = options.baseUrl ?? testSuite.baseUrl;
   for (const request of testSuite.requests) {
     const expectedResponse = request.expectedResult;

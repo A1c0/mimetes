@@ -4,7 +4,7 @@ Run a proxy server to record http requests and responses and create a test suite
 
 Options:
   -p, --port          The proxy port to mime on (default 8080)
-  -n, --name          The name of the test suite (default "<timestamp>")
+  -n, --name          The name of the test suite (#required)
   -d, --report-dir    The directory to save the test suite (default ".")
   -h, --help          Print usage information
   --exclude-methods    A comma separated list of methods to exclude
