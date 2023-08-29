@@ -1,0 +1,7 @@
+{
+  "prettier": true,
+  "rules": {
+    "unicorn/no-array-reduce": 0,
+    "import/order": 0
+  }
+}
