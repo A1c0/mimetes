@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import * as url from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import * as url from 'node:url';
 
 import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
 import { showUsage } from './common.js';
@@ -19,13 +19,14 @@ const global = argv => {
       { short: 'h', long: 'help' },
       { short: 'v', long: 'version' },
     ],
+
     args,
   );
 
   if (!scoopedArgs?.cmd && scoopedArgs?.options?.version) {
     console.log(
       JSON.parse(
-        fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf-8'),
+        fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf8'),
       ).version,
     );
     return;

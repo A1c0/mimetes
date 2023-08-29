@@ -1,4 +1,5 @@
-import http from 'http';
+import { Buffer } from 'node:buffer';
+import http from 'node:http';
 
 import { httpRequest } from '../lib/client.js';
 import { globToRegex } from '../lib/glob-to-regex.js';
@@ -10,21 +11,21 @@ import { Writer } from './writer.js';
 /**
  * Returns the body of a request
  *
- * @param req {IncomingMessage} - the request
+ * @param request {IncomingMessage} - the request
  * @returns {Promise<Buffer>} - the body of the request
  */
-export const getBody = req =>
+export const getBody = request =>
   new Promise((resolve, reject) => {
-    let body = [];
-    req
+    const body = [];
+    request
       .on('data', chunk => {
         body.push(chunk);
       })
       .on('end', () => {
         resolve(Buffer.concat(body));
       })
-      .on('error', err => {
-        reject(err);
+      .on('error', error => {
+        reject(error);
       });
   });
 
@@ -39,13 +40,14 @@ const bundleMethodPredicate = (includeMethods, excludeMethods) => {
   if (!includeMethods && !excludeMethods) {
     return () => true;
   }
+
   const excludeRegex = excludeMethods
     ? `(?:(?!${excludeMethods.join('|')}))`
     : '';
   const includeRegex = includeMethods ? `${includeMethods.join('|')}` : '.*';
   const methodRegex = new RegExp(`^${excludeRegex}${includeRegex}$`);
 
-  // memoize the method predicate to avoid testing twice the same value
+  // Memoize the method predicate to avoid testing twice the same value
   return memoize(method => methodRegex.test(method));
 };
 
@@ -55,6 +57,7 @@ const allPass = predicates => value => {
       return false;
     }
   }
+
   return true;
 };
 
@@ -73,7 +76,7 @@ const bundleGlobPathPredicate = (includeGlob, excludeGlob) => {
 
   const predicates = [...excludePredicates, ...includePredicates];
 
-  // memoize the method predicate to avoid testing twice the same value
+  // Memoize the method predicate to avoid testing twice the same value
   return memoize(allPass(predicates));
 };
 
@@ -116,11 +119,11 @@ export const startMimetesServer = (
     options.excludePaths,
   );
 
-  const onRequest = async (req, res) => {
-    const url = req.url;
-    const method = req.method;
-    const headers = req.headers;
-    const body = await getBody(req);
+  const onRequest = async (request, res) => {
+    const url = request.url;
+    const method = request.method;
+    const headers = request.headers;
+    const body = await getBody(request);
     const result = await httpRequest(
       `${listeningBaseUrl}${url}`,
       method,
@@ -140,6 +143,7 @@ export const startMimetesServer = (
         },
       });
     }
+
     res.writeHead(result.statusCode, result.headers);
     res.end(result.data);
     logRequest(method, listeningBaseUrl, url, result.statusCode);

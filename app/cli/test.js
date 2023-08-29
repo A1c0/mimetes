@@ -14,9 +14,10 @@ export const test = args => {
     showUsage('test');
     return;
   }
+
   // TODO: implement
   throw new Error('Not implemented');
-  // test is file exists
+  // Test is file exists
   // test is file is a json file
   // test is file is a valid json file
   // test is file is a valid mimetes test file

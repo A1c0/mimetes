@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const padding = n => '  '.repeat(n);
 
@@ -37,14 +37,16 @@ export class Writer {
    * @param obj {object} - the object to write
    * @returns {void}
    */
-  writeJson(obj) {
+  writeJson(object) {
     if (!this.first) {
       this.writeStream.write(',');
     }
+
     if (this.first) {
       this.first = false;
     }
+
     this.writeStream.write('\n');
-    this.writeStream.write(padding(2) + JSON.stringify(obj));
+    this.writeStream.write(padding(2) + JSON.stringify(object));
   }
 }

@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import url from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import url from 'node:url';
 
 import { logger } from '../../lib/console.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-export const exitLog = (msg, code = 1) => {
-  logger.error(msg);
+export const exitLog = (message, code = 1) => {
+  logger.error(message);
   process.exit(code);
 };
 
@@ -19,8 +19,8 @@ export const exitLog = (msg, code = 1) => {
  */
 export const showUsage = docName => {
   const docPath = path.resolve(__dirname, `../../assets/usage/${docName}.txt`);
-  fs.access(docPath, fs.constants.F_OK, err => {
-    if (err) {
+  fs.access(docPath, fs.constants.F_OK, error => {
+    if (error) {
       exitLog(`Usage document '${docPath}' not found.`);
     }
   });
@@ -36,10 +36,12 @@ export const parseInt = (propName, value) => {
   if (!value) {
     return;
   }
+
   const isInt = /^\d+$/.test(value);
   if (!isInt) {
     exitLog(`Invalid ${propName} value '${value}. Must be an integer.'`);
   }
+
   return Number.parseInt(value);
 };
 
@@ -47,8 +49,10 @@ const parseString = (propName, value) => {
   if (value === undefined) {
     return undefined;
   }
+
   if (typeof value !== 'string') {
     exitLog(`Invalid ${propName} value '${value}. Must be a string.'`);
   }
+
   return value;
 };

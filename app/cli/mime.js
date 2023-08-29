@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { groupOptions } from '../../lib/argv-parsing.js';
 import { isValidUrl } from '../../lib/url.js';
@@ -27,24 +27,28 @@ export const mime = args => {
     showUsage('mime');
     return;
   }
+
   const host = scoopedArgs?.params?.[0];
   if (!host) {
     exitLog('No host specified. Use --help for more information.');
   }
+
   if (!isValidUrl(host)) {
     exitLog(`Invalid host '${host}'. Use --help for more information.`);
   }
+
   const port = parseInt('port', scoopedArgs?.options?.port) ?? 8080;
   const name = scoopedArgs?.options?.name ?? 'mimetes-' + Date.now();
   const outputDir = scoopedArgs?.options?.['report-dir'] ?? '.';
   const outputDirPath = path.resolve(process.cwd(), outputDir);
   try {
     fs.accessSync(outputDirPath, fs.constants.W_OK);
-  } catch (err) {
+  } catch {
     exitLog(
       `Cannot write to directory '${outputDirPath}'. Use --help for more information.`,
     );
   }
+
   const excludeMethods = scoopedArgs?.options?.['exclude-methods']?.split(',');
   const excludePaths = scoopedArgs?.options?.['exclude-paths']?.split(',');
   const includeMethods = scoopedArgs?.options?.['include-methods']?.split(',');
