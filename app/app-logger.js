@@ -1,4 +1,4 @@
-import { hexColor } from '../lib/console.js';
+import { color, hexColor, logger } from '../lib/console.js';
 import { memoize } from '../lib/memoize.js';
 
 // "OPTIONS" Or "CONNECT" are the longest
@@ -41,12 +41,25 @@ const httpMethod = memoize(value => {
  * @param statusCode {number} - the status code
  * @returns {void}
  */
-export const logRequest = (method, host, endpoint, statusCode) => {
+export const logRequestRecorded = (method, host, endpoint, statusCode) => {
   const color = statusCode >= 400 ? '#9d5353' : '#54a454';
-  console.log(
+  logger.log(
     `${httpMethod(method)} ${hexColor('#808080')(host)}${endpoint} ${hexColor(
       color,
     )(`(${statusCode})`)}`,
+  );
+};
+
+export const logRequestTest = (
+  { method, url, expectedResult: { statusCode } },
+  success,
+) => {
+  const colorText = success ? hexColor('#54a454') : x => color.red(x);
+  const icon = success ? '✓' : '×';
+  logger.log(
+    colorText(
+      `${icon} ${method.padEnd(MAX_METHOD_NAME_LENGTH)} ${url} (${statusCode})`,
+    ),
   );
 };
 
@@ -56,5 +69,5 @@ export const logRequest = (method, host, endpoint, statusCode) => {
  * @returns {void}
  */
 export const mimetesLog = message => {
-  console.log(hexColor('#ffebc4')(message));
+  logger.log(hexColor('#ffebc4')(message));
 };

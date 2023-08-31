@@ -1,11 +1,18 @@
+import { Buffer } from 'node:buffer';
+
 import { httpRequest } from '../lib/client.js';
-import { hexColor } from '../lib/console.js';
 import { deepEqual } from '../lib/equals.js';
 import { parseJson } from '../lib/json-parser.js';
 
+export class TestRunnerError extends Error {
+  constructor(message, request) {
+    super(message);
+    this.name = 'TestRunnerError';
+    this.request = request;
+  }
+}
+
 /**
- * Run a test suite.
- *
  * @typedef {Object} TestSuite
  * @property {string} baseUrl - the base url used for all requests
  * @property {Object[]} requests - the requests
@@ -16,14 +23,23 @@ import { parseJson } from '../lib/json-parser.js';
  * @property {Object} requests[].expectedResult - the expected result
  * @property {number} requests[].expectedResult.statusCode - the expected status code
  * @property {Object} requests[].expectedResult.headers - the expected headers
- *
+ */
+
+/**
  * @typedef {Object} Options
  * @property {string|undefined} baseUrl - the base url to override the test suite's base url
+ * @property {string[]} ignoredProps - the properties to ignore when comparing the expected result with the actual result
+ * @property {function(Object): void} onRequestPassed - the callback to call when a request passes
+ */
+
+/**
+ * Run a test suite.
  *
  * @param testSuite {TestSuite} - the test suite to run
  * @param options {Options} - the options
+ * @return {Promise<void>} - a promise that resolves when the test suite is finished
  */
-export const runTest = async (testSuite, options = {}) => {
+export const runTestSuite = async (testSuite, options = {}) => {
   const baseUrl = options.baseUrl ?? testSuite.baseUrl;
   for (const request of testSuite.requests) {
     const expectedResponse = request.expectedResult;
@@ -32,20 +48,29 @@ export const runTest = async (testSuite, options = {}) => {
       baseUrl + request.url,
       request.method,
       request.headers,
-      request.body,
+      request.body && Buffer.from(JSON.stringify(request.body)),
     );
+
     if (expectedResponse.statusCode !== actualResponse.statusCode) {
-      throw new Error(
+      throw new TestRunnerError(
         `Expected status code ${expectedResponse.statusCode} but got ${actualResponse.statusCode}`,
+        request,
       );
     }
 
-    if (!deepEqual(expectedResponse.body, parseJson(actualResponse.data))) {
-      throw new Error(
-        `Expected body ${expectedResponse.body} but got ${actualResponse.data}`,
+    const diffBody = deepEqual(
+      parseJson(actualResponse.data),
+      expectedResponse.body,
+      options.ignoredProps,
+    );
+
+    if (diffBody) {
+      throw new TestRunnerError(
+        `The response body is not as expected:\n${diffBody}\n`,
+        request,
       );
     }
 
-    console.log(hexColor('#5ea654')('✓'), request.url);
+    options.onRequestPassed(request);
   }
 };

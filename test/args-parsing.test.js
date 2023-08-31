@@ -45,11 +45,11 @@ test('could parse command with params and boolean options', t => {
   });
 
   t.deepEqual(
-    parsedArgs(['foo', 'bar', '--baz', 'bab', '--joe', '--qux', 'quux']),
+    parsedArgs(['foo', 'bar', '--baz', 'bab', '--joe', '--qux', 'qu-ux']),
     {
       cmd: 'foo',
       params: ['bar'],
-      options: { baz: 'bab', qux: 'quux', joe: true },
+      options: { baz: 'bab', qux: 'qu-ux', joe: true },
     },
   );
 
@@ -57,6 +57,14 @@ test('could parse command with params and boolean options', t => {
     cmd: 'foo',
     params: ['bar'],
     options: { baz: 'bab', qux: 'quux' },
+  });
+});
+
+test('could parse command with params and options with "-" in values', t => {
+  t.deepEqual(parsedArgs(['cmd', 'param', 'param-2', '--baz', '1', '--boo']), {
+    cmd: 'cmd',
+    params: ['param', 'param-2'],
+    options: { baz: '1', boo: true },
   });
 });
 

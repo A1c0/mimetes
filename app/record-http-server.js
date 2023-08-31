@@ -3,7 +3,7 @@ import http from 'node:http';
 
 import { httpRequest } from '../lib/client.js';
 import { parseJson } from '../lib/json-parser.js';
-import { logRequest, mimetesLog } from './app-logger.js';
+import { logRequestRecorded, mimetesLog } from './app-logger.js';
 import {
   bundleGlobPathPredicate,
   bundleMethodPredicate,
@@ -93,11 +93,11 @@ export const startMimetesServer = (
           body: parseJson(result.data),
         },
       });
+      logRequestRecorded(method, listeningBaseUrl, url, result.statusCode);
     }
 
     response.writeHead(result.statusCode, result.headers);
     response.end(result.data);
-    logRequest(method, listeningBaseUrl, url, result.statusCode);
   };
 
   const server = http.createServer(onRequest);
@@ -111,7 +111,7 @@ export const startMimetesServer = (
     writer.terminate();
     server.close();
     mimetesLog(
-      `Mimetes server stopped. Report written to ${report.outputDir}/${writer.filename}.json`,
+      `\nMimetes server stopped. Report written to ${report.outputDir}/${writer.filename}.json`,
     );
   };
 };

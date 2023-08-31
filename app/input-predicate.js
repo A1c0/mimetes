@@ -1,5 +1,5 @@
-import { globToRegex } from '../lib/glob-to-regex.js';
 import { memoize } from '../lib/memoize.js';
+import { globToRegex } from '../lib/regex.js';
 
 /**
  * Bundles a predicate depending on including and excluding methods
@@ -7,7 +7,6 @@ import { memoize } from '../lib/memoize.js';
  * @param excludeMethods {string[]|undefined} - the methods to exclude
  * @returns {function(string): boolean} - the method predicate
  */
-// TODO: test regex vs includes array method performance
 export const bundleMethodPredicate = (includeMethods, excludeMethods) => {
   if (!includeMethods && !excludeMethods) {
     return () => true;

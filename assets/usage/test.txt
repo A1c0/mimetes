@@ -3,5 +3,6 @@ Usage: mimetes test <test-files> [options]
 Run all requests and check the responses against the recorded responses.
 
 Options:
-  -b, --base          Base URL to use for requests
-  -h, --help          Print usage information
+  -b, --base       Base URL to use for requests
+  -h, --help       Print usage information
+  --ignore-props   A comma separated list of ignored properties in body comparison

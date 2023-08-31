@@ -2,6 +2,7 @@
   "prettier": true,
   "rules": {
     "unicorn/no-array-reduce": 0,
-    "import/order": 0
+    "import/order": 0,
+    "ava/no-import-test-files": ["error", {"files": ["test/**/*.test.js" ]}]
   }
 }

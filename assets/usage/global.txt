@@ -3,7 +3,7 @@ Usage: mimetes <command> [options]
 Test an API with ease
 
 Common Commands:
-  mime      Create a test suite based on http requests recorded
+  mime   Create a test suite based on http requests recorded
 
 Options:
   -h, --help      Print usage information

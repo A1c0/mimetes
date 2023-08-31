@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as url from 'node:url';
 
-import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
-import { showUsage } from './common.js';
+import { logger } from '../../lib/console.js';
+import { cliCmd } from './common.js';
 import { mime } from './mime.js';
+import { test } from './test.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -12,34 +13,27 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
  * The global command
  * @param argv {string[]} The command line arguments
  */
-const global = argv => {
-  const args = parsedArgs(argv);
-  const scoopedArgs = groupOptions(
-    [
-      { short: 'h', long: 'help' },
-      { short: 'v', long: 'version' },
-    ],
-
-    args,
-  );
-
-  if (!scoopedArgs?.cmd && scoopedArgs?.options?.version) {
-    console.log(
+const global = cliCmd('global', (args, argv) => {
+  if (!args?.cmd && args?.options?.version) {
+    logger.log(
       JSON.parse(
         fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf8'),
       ).version,
     );
-    return;
+    return true;
   }
 
-  if (scoopedArgs?.cmd === 'mime') {
-    mime(args);
-    return;
+  if (args?.cmd === 'mime') {
+    mime(argv);
+    return true;
   }
 
-  // TODO add 'test' commands
+  if (args?.cmd === 'test') {
+    test(argv);
+    return true;
+  }
 
-  showUsage('global');
-};
+  return false;
+});
 
 export default global;

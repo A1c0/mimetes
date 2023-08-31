@@ -3,7 +3,10 @@ import path from 'node:path';
 import process from 'node:process';
 import url from 'node:url';
 
+import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
 import { logger } from '../../lib/console.js';
+import { memoize } from '../../lib/memoize.js';
+import { regexMultiExec } from '../../lib/regex.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -15,19 +18,19 @@ export const exitLog = (message, code = 1) => {
 /* eslint-enable */
 
 /**
- * Show a usage document
+ * Read a usage document
  *
  * @param docName {string} The name of the usage document to show
- * @returns {void}@
- */
-export const showUsage = docName => {
+ * @returns {string} The content of the usage document
+ * */
+export const readUsage = docName => {
   const docPath = path.resolve(__dirname, `../../assets/usage/${docName}.txt`);
   fs.access(docPath, fs.constants.F_OK, error => {
     if (error) {
       exitLog(`Usage document '${docPath}' not found.`);
     }
   });
-  fs.createReadStream(docPath).pipe(process.stdout);
+  return fs.readFileSync(docPath, 'utf8');
 };
 
 /**
@@ -49,7 +52,7 @@ export const parseInt = (propName, value) => {
 };
 
 export const parseString = (propName, value) => {
-  if (value === undefined) {
+  if (!value) {
     return undefined;
   }
 
@@ -58,4 +61,31 @@ export const parseString = (propName, value) => {
   }
 
   return value;
+};
+
+const parsedArgsMemo = memoize(parsedArgs);
+
+/**
+ * Create a CLI command
+ * @param usage {string} The name of the usage document to show
+ * @param callback {function} The callback to execute
+ * @return {(function(*): void)|*}
+ */
+export const cliCmd = (usage, callback) => {
+  const doc = readUsage(usage);
+  const optionTxt = doc.replace(/(.*\n)*options:$/im, '');
+  const optionRules = regexMultiExec(
+    /-(?<short>[a-z]+),\s+--(?<long>[a-zA-Z\d-]+)/g,
+    optionTxt,
+  ).map(x => x.groups);
+
+  return argv => {
+    const args = parsedArgsMemo(argv);
+    const scoopedArgs = groupOptions(optionRules, args);
+
+    // If any command is found, show the usage
+    if (!callback(scoopedArgs, argv)) {
+      logger.log(doc);
+    }
+  };
 };
