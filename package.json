@@ -1,6 +1,6 @@
 {
   "name": "mimetes",
-  "version": "0.0.2-beta.1",
+  "version": "0.0.2-beta.2",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "files": [
     "lib/**/*.js",
     "app/**/*.js",
-    "bin/*.js",
+    "bin/*.cjs",
     "assets/**/*.txt"
   ],
   "devDependencies": {
