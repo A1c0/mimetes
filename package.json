@@ -1,6 +1,6 @@
 {
   "name": "mimetes",
-  "version": "0.0.2-beta.3",
+  "version": "0.0.2-beta.4",
   "main": "index.js",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
@@ -9,7 +9,9 @@
     "test": "ava test/*",
     "lint": "xo"
   },
-  "bin": "./bin/mimetes.cjs",
+  "bin": {
+    "mimetes": "./bin/mimetes.cjs"
+  },
   "files": [
     "lib/**/*.js",
     "app/**/*.js",
