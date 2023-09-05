@@ -3497,7 +3497,7 @@ __metadata:
     prettier: "npm:^3.0.0"
     xo: "npm:^0.56.0"
   bin:
-    mimetes: ./bin/mimetes.cjs
+    mimetes: bin/mimetes.cjs
   languageName: unknown
   linkType: soft
 

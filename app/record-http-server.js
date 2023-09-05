@@ -111,7 +111,7 @@ export const startMimetesServer = (
     writer.terminate();
     server.close();
     mimetesLog(
-      `\nMimetes server stopped. Report written to ${report.outputDir}/${writer.filename}.json`,
+      `\nMimetes server stopped. Report written to ${report.outputDir}/${writer.filename}`,
     );
   };
 };

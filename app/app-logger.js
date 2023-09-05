@@ -1,4 +1,4 @@
-import { color, hexColor, logger } from '../lib/console.js';
+import { hexColor, logger } from '../lib/console.js';
 import { memoize } from '../lib/memoize.js';
 
 // "OPTIONS" Or "CONNECT" are the longest
@@ -50,17 +50,27 @@ export const logRequestRecorded = (method, host, endpoint, statusCode) => {
   );
 };
 
+/**
+ * Logs a request test result
+ * @param method {string} - the method
+ * @param url {string} - the url of the request
+ * @param statusCode {number} - the status code
+ * @param success {boolean} - whether the test was successful
+ * @returns {void}
+ */
 export const logRequestTest = (
   { method, url, expectedResult: { statusCode } },
   success,
 ) => {
-  const colorText = success ? hexColor('#54a454') : x => color.red(x);
-  const icon = success ? '✓' : '×';
-  logger.log(
-    colorText(
-      `${icon} ${method.padEnd(MAX_METHOD_NAME_LENGTH)} ${url} (${statusCode})`,
-    ),
-  );
+  const requestLine = `${method.padEnd(
+    MAX_METHOD_NAME_LENGTH,
+  )} ${url} (${statusCode})`;
+
+  if (success) {
+    logger.success(`✓ ${requestLine}`);
+  } else {
+    logger.error(`× ${requestLine}`);
+  }
 };
 
 /**

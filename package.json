@@ -1,9 +1,7 @@
 {
   "name": "mimetes",
-  "version": "0.0.2-beta.5",
-  "bin": {
-    "mimetes": "bin/mimetes.cjs"
-  },
+  "version": "0.0.2-beta.6",
+  "bin": "bin/mimetes.cjs",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
   "license": "MIT",
@@ -13,9 +11,8 @@
   },
   "files": [
     "lib/**/*.js",
-    "app/**/*.js",
-    "bin/*.cjs",
-    "assets/**/*.txt"
+    "app/**/*.{js,txt}",
+    "bin/*.cjs"
   ],
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
