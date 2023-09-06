@@ -24,7 +24,10 @@ export const exitLog = (message, code = 1) => {
  * @returns {string} The content of the usage document
  * */
 export const readUsage = docName => {
-  const docPath = path.resolve(__dirname, `../../usages/${docName}.txt`);
+  const docPath = path.resolve(
+    __dirname,
+    `../../app/cli/usages/${docName}.txt`,
+  );
   fs.access(docPath, fs.constants.F_OK, error => {
     if (error) {
       exitLog(`Usage document '${docPath}' not found.`);
