@@ -4,6 +4,7 @@ Test an API with ease
 
 Common Commands:
   mime   Create a test suite based on http requests recorded
+  test   Run test suites against an API
 
 Options:
   -h, --help      Print usage information
