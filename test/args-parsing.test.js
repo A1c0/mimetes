@@ -61,11 +61,14 @@ test('could parse command with params and boolean options', t => {
 });
 
 test('could parse command with params and options with "-" in values', t => {
-  t.deepEqual(parsedArgs(['cmd', 'param', 'param-2', '--baz', '1', '--boo']), {
-    cmd: 'cmd',
-    params: ['param', 'param-2'],
-    options: { baz: '1', boo: true },
-  });
+  t.deepEqual(
+    parsedArgs(['cmd', 'param', 'param-2', 'params-3', '--baz', '1', '--boo']),
+    {
+      cmd: 'cmd',
+      params: ['param', 'param-2', 'params-3'],
+      options: { baz: '1', boo: true },
+    },
+  );
 });
 
 test('could parse command with only options', t => {
