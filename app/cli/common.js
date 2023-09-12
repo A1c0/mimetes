@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import * as readline from 'node:readline';
 import url from 'node:url';
 
 import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
@@ -92,3 +93,20 @@ export const cliCmd = (usage, callback) => {
     }
   };
 };
+/**
+ * Ask a question to the user and return the answer
+ * @param question {string} The question to ask
+ * @return {Promise<string>}  The answer
+ */
+export const prompt = question =>
+  new Promise(resolve => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question(question, answer => {
+      rl.close();
+      resolve(answer);
+    });
+  });

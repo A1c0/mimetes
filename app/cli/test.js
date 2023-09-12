@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 
-import { logger } from '../../lib/console.js';
+import { color, logger } from '../../lib/console.js';
+import { parseJson } from '../../lib/json-parser.js';
 import { logRequestTest } from '../app-logger.js';
-import { TestRunnerError, runTestSuite } from '../test-runner.js';
-import { cliCmd, exitLog } from './common.js';
+import { TestRunnerError, testRequest } from '../test-runner.js';
+import { cliCmd, exitLog, prompt } from './common.js';
 
 /**
  * Validates the format of a report
@@ -62,25 +63,42 @@ export const test = cliCmd('test', args => {
   }
 
   const ignoredProps = args?.options?.['ignore-props']?.split(',');
+  const interactive = args?.options?.interactive;
   (async () => {
     for (const file of files) {
+      let isReportModified = false;
       const report = safeReadFile(file);
       logger.log('\n' + file);
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        await runTestSuite(report, {
-          onRequestPassed(request) {
-            logRequestTest(request, true);
-          },
-          ignoredProps,
-        });
-      } catch (error) {
-        if (error instanceof TestRunnerError) {
-          logRequestTest(error.request, false);
-          logger.log(error.message);
-        } else {
-          throw error;
+      // eslint-disable-next-line no-await-in-loop
+      const baseUrl = args?.options.baseUrl ?? report.baseUrl;
+      for (const request of report.requests) {
+        try {
+          await testRequest(request, baseUrl, { ignoredProps });
+          logRequestTest(request, true);
+        } catch (error) {
+          if (error instanceof TestRunnerError) {
+            logRequestTest(error.request, false);
+            console.log(error.message);
+            if (interactive) {
+              const override = await prompt(
+                'Override ?' + color.gray(' (y/n) '),
+              ).then(answer => /\s*y\s*/i.test(answer));
+              if (!override) {
+                exitLog('Test failed.');
+              }
+              request.expectedResult = {
+                statusCode: error.actualResponse.statusCode,
+                body: parseJson(error.actualResponse.data),
+              };
+              isReportModified = true;
+            }
+          } else {
+            exitLog(error.toString());
+          }
         }
+      }
+      if (isReportModified) {
+        fs.writeFileSync(file, JSON.stringify(report, null, 2));
       }
     }
   })();

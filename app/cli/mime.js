@@ -28,7 +28,7 @@ export const mime = cliCmd('mime', args => {
   }
 
   const port = parseInt('port', args?.options?.port) ?? 8080;
-  const name = parseString(args?.options?.name) ?? 'custom';
+  const name = parseString('name', args?.options?.name) ?? 'custom';
   const outputDir = args?.options?.['report-dir'] ?? '.';
   const outputDirPath = path.resolve(process.cwd(), outputDir);
   try {

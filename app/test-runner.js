@@ -5,10 +5,11 @@ import { deepEqual } from '../lib/equals.js';
 import { parseJson } from '../lib/json-parser.js';
 
 export class TestRunnerError extends Error {
-  constructor(message, request) {
+  constructor(message, request, actualResponse) {
     super(message);
     this.name = 'TestRunnerError';
     this.request = request;
+    this.actualResponse = actualResponse;
   }
 }
 
@@ -29,48 +30,37 @@ export class TestRunnerError extends Error {
  * @typedef {Object} Options
  * @property {string|undefined} baseUrl - the base url to override the test suite's base url
  * @property {string[]} ignoredProps - the properties to ignore when comparing the expected result with the actual result
- * @property {function(Object): void} onRequestPassed - the callback to call when a request passes
  */
 
-/**
- * Run a test suite.
- *
- * @param testSuite {TestSuite} - the test suite to run
- * @param options {Options} - the options
- * @return {Promise<void>} - a promise that resolves when the test suite is finished
- */
-export const runTestSuite = async (testSuite, options = {}) => {
-  const baseUrl = options.baseUrl ?? testSuite.baseUrl;
-  for (const request of testSuite.requests) {
-    const expectedResponse = request.expectedResult;
-    // eslint-disable-next-line no-await-in-loop
-    const actualResponse = await httpRequest(
-      baseUrl + request.url,
-      request.method,
-      request.headers,
-      request.body && Buffer.from(JSON.stringify(request.body)),
+export async function testRequest(request, baseUrl, options) {
+  const expectedResponse = request.expectedResult;
+  // eslint-disable-next-line no-await-in-loop
+  const actualResponse = await httpRequest(
+    baseUrl + request.url,
+    request.method,
+    request.headers,
+    request.body && Buffer.from(JSON.stringify(request.body)),
+  );
+
+  if (expectedResponse.statusCode !== actualResponse.statusCode) {
+    throw new TestRunnerError(
+      `Expected status code ${expectedResponse.statusCode} but got ${actualResponse.statusCode}`,
+      request,
+      actualResponse,
     );
-
-    if (expectedResponse.statusCode !== actualResponse.statusCode) {
-      throw new TestRunnerError(
-        `Expected status code ${expectedResponse.statusCode} but got ${actualResponse.statusCode}`,
-        request,
-      );
-    }
-
-    const diffBody = deepEqual(
-      parseJson(actualResponse.data),
-      expectedResponse.body,
-      options.ignoredProps,
-    );
-
-    if (diffBody) {
-      throw new TestRunnerError(
-        `The response body is not as expected:\n${diffBody}\n`,
-        request,
-      );
-    }
-
-    options.onRequestPassed(request);
   }
-};
+
+  const diffBody = deepEqual(
+    parseJson(actualResponse.data),
+    expectedResponse.body,
+    options.ignoredProps,
+  );
+
+  if (diffBody) {
+    throw new TestRunnerError(
+      `The response body is not as expected:\n${diffBody}\n`,
+      request,
+      actualResponse,
+    );
+  }
+}

@@ -1,5 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import url from 'node:url';
+
+import { kebabCase } from '../lib/case.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const padding = n => '  '.repeat(n);
 
@@ -12,6 +17,7 @@ export class Writer {
   terminate() {
     this.writeStream.write(`\n${padding(1)}]\n}`);
     this.writeStream.end();
+    fs.renameSync(this.tmpFilePath, this.finalFilePath);
   }
 
   /**
@@ -21,7 +27,19 @@ export class Writer {
    * @return {string}
    */
   get filename() {
-    return `${this.timestamp}-${this.name}.json`;
+    return `${kebabCase(this.name)}.json`;
+  }
+
+  get tmpDirPath() {
+    return path.resolve(__dirname, '../tmp');
+  }
+
+  get tmpFilePath() {
+    return path.resolve(this.tmpDirPath, `${this.timestamp}-${this.name}.json`);
+  }
+
+  get finalFilePath() {
+    return path.resolve(this.outputDir, this.filename);
   }
 
   /**
@@ -36,9 +54,14 @@ export class Writer {
     this.timestamp = Date.now();
     this.name = name;
     this.first = true;
-    this.writeStream = fs.createWriteStream(
-      path.resolve(outputDir, this.filename),
-    );
+    this.outputDir = outputDir;
+    // Auto clean the tmp directory
+    fs.readdirSync(this.tmpDirPath).forEach(file => {
+      if (file.endsWith('.json')) {
+        fs.unlinkSync(path.resolve(this.tmpDirPath, `${file}`));
+      }
+    });
+    this.writeStream = fs.createWriteStream(this.tmpFilePath);
     this.writeStream.write(`{\n${padding(1)}"timestamp": "${this.timestamp}",`);
     this.writeStream.write(`\n${padding(1)}"baseUrl": "${baseUrl}",`);
     this.writeStream.write(`\n${padding(1)}"requests": [`);
