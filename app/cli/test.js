@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { color, logger } from '../../lib/console.js';
 import { parseJson } from '../../lib/json-parser.js';
 import { logRequestTest } from '../app-logger.js';
-import { TestRunnerError, testRequest } from '../test-runner.js';
+import { testRequest, TestRunnerError } from '../test-runner.js';
 import { cliCmd, exitLog, prompt } from './common.js';
 
 const pbCoby = data => {
@@ -69,7 +69,7 @@ export const test = cliCmd('test', args => {
 
   const ignoredProps = args?.options?.['ignore-props']?.split(',');
   const interactive = args?.options?.interactive;
-  const verbose = args?.options?.verbose;
+  const debug = args?.options?.debug;
 
   (async () => {
     for (const file of files) {
@@ -93,7 +93,7 @@ export const test = cliCmd('test', args => {
           if (error instanceof TestRunnerError) {
             logRequestTest(error.request, false);
             logger.error(error.message);
-            if (verbose) {
+            if (debug) {
               fs.writeFileSync(
                 'expected.json',
                 JSON.stringify(error.request.expectedResult.body),
