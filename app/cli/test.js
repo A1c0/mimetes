@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
 import { color, logger } from '../../lib/console.js';
@@ -5,6 +6,10 @@ import { parseJson } from '../../lib/json-parser.js';
 import { logRequestTest } from '../app-logger.js';
 import { TestRunnerError, testRequest } from '../test-runner.js';
 import { cliCmd, exitLog, prompt } from './common.js';
+
+const pbCoby = data => {
+  execSync(`pbcopy`, { input: JSON.stringify(data) });
+};
 
 /**
  * Validates the format of a report
@@ -64,11 +69,20 @@ export const test = cliCmd('test', args => {
 
   const ignoredProps = args?.options?.['ignore-props']?.split(',');
   const interactive = args?.options?.interactive;
+  const verbose = args?.options?.verbose;
+
   (async () => {
     for (const file of files) {
       let isReportModified = false;
       const report = safeReadFile(file);
-      logger.log('\n' + file);
+      if (report.title) {
+        logger.log('\n' + report.title + color.gray(` (${file})`));
+      } else {
+        logger.log('\n' + file);
+      }
+      if (report.description) {
+        logger.log(color.gray(report.description));
+      }
       // eslint-disable-next-line no-await-in-loop
       const baseUrl = args?.options.baseUrl ?? report.baseUrl;
       for (const request of report.requests) {
@@ -78,7 +92,15 @@ export const test = cliCmd('test', args => {
         } catch (error) {
           if (error instanceof TestRunnerError) {
             logRequestTest(error.request, false);
-            console.log(error.message);
+            logger.error(error.message);
+            if (verbose) {
+              fs.writeFileSync(
+                'expected.json',
+                JSON.stringify(error.request.expectedResult.body),
+              );
+              fs.writeFileSync('actual.json', error.actualResponse.data);
+              console.log('expected.json and actual.json written to disk.');
+            }
             if (interactive) {
               const override = await prompt(
                 'Override ?' + color.gray(' (y/n) '),
@@ -91,6 +113,8 @@ export const test = cliCmd('test', args => {
                 body: parseJson(error.actualResponse.data),
               };
               isReportModified = true;
+            } else {
+              exitLog('Test failed.');
             }
           } else {
             exitLog(error.toString());

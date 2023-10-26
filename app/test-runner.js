@@ -4,6 +4,12 @@ import { httpRequest } from '../lib/client.js';
 import { deepEqual } from '../lib/equals.js';
 import { parseJson } from '../lib/json-parser.js';
 
+/**
+ * @typedef {Object} TestRunnerError
+ * @property {string} message - the error message
+ * @property {Object} request - the request
+ * @property {Object} actualResponse - the actual response
+ */
 export class TestRunnerError extends Error {
   constructor(message, request, actualResponse) {
     super(message);

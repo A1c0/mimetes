@@ -6,4 +6,5 @@ Options:
   -b, --base          Base URL to use for requests
   -h, --help          Print usage information
   -i, --interactive   Run in interactive mode
+  -d, --debug         If an error occurs, write the expected and actual on actual.json and expected.json
   --ignore-props      A comma separated list of ignored properties in body comparison

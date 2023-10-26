@@ -1,6 +1,6 @@
 {
   "name": "mimetes",
-  "version": "0.0.3-alpha.0",
+  "version": "0.0.3",
   "bin": "bin/mimetes.cjs",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
