@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { color, logger } from '../../lib/console.js';
 import { parseJson } from '../../lib/json-parser.js';
 import { logRequestTest } from '../app-logger.js';
-import { testRequest, TestRunnerError } from '../test-runner.js';
+import { TestRunnerError, testRequest } from '../test-runner.js';
 import { cliCmd, exitLog, prompt } from './common.js';
 
 const pbCoby = data => {
@@ -58,6 +58,7 @@ const safeReadFile = file => {
 };
 
 export const test = cliCmd('test', args => {
+  console.log(args);
   if (args?.options?.help) {
     return false;
   }
@@ -84,7 +85,8 @@ export const test = cliCmd('test', args => {
         logger.log(color.gray(report.description));
       }
       // eslint-disable-next-line no-await-in-loop
-      const baseUrl = args?.options.baseUrl ?? report.baseUrl;
+      const baseUrl = args?.options.base ?? report.baseUrl;
+      console.log('baseUrl', baseUrl);
       for (const request of report.requests) {
         try {
           await testRequest(request, baseUrl, { ignoredProps });
