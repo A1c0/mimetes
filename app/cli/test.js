@@ -58,7 +58,6 @@ const safeReadFile = file => {
 };
 
 export const test = cliCmd('test', args => {
-  console.log(args);
   if (args?.options?.help) {
     return false;
   }
@@ -86,7 +85,6 @@ export const test = cliCmd('test', args => {
       }
       // eslint-disable-next-line no-await-in-loop
       const baseUrl = args?.options.base ?? report.baseUrl;
-      console.log('baseUrl', baseUrl);
       for (const request of report.requests) {
         try {
           await testRequest(request, baseUrl, { ignoredProps });
