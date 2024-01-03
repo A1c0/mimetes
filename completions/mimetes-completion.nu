@@ -8,9 +8,9 @@ export extern "mimetes" [
 # Run a proxy server to record http requests and responses and create a test suite
 export extern "mimetes mime" [
     host: string                   # The API serveur http(s) address
-    --port(-p): int                # The proxy port to mime on             (default 8080)
-    --name(-n): string             # The name of the test suite            (default "custom")
-    --report-dir(-d): string       # The directory to save the test suite  (default ".")
+    --port(-p): int                # The proxy port to mime on (default 8080)
+    --name(-n): string             # The name of the test suite (default "custom")
+    --report-dir(-d): string       # The directory to save the test suite (default ".")
     --help(-h)                     # Print usage information
     --include-methods: string      # A comma separated list of methods to include
     --exclude-methods: string      # A comma separated list of methods to exclude
@@ -18,9 +18,9 @@ export extern "mimetes mime" [
     --exclude-paths: string        # A comma separated list of path globs pattern to exclude
 ]
 
-#Run all requests and check the responses against the recorded responses.
+# Run all requests and check the responses against the recorded responses.
 export extern "mimetes test" [
-    ...test_files: string          # The test suite
+    ...test_files: string          # The test suites
     --base(-b): string             # Base URL to use for requests
     --help(-h)                     # Print usage information
     --verbose(-v)                  # Print verbose output
