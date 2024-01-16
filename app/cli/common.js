@@ -5,7 +5,7 @@ import * as readline from 'node:readline';
 import url from 'node:url';
 
 import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
-import { logger } from '../../lib/console.js';
+import { color, logger } from '../../lib/console.js';
 import { memoize } from '../../lib/memoize.js';
 import { regexMultiExec } from '../../lib/regex.js';
 
@@ -93,6 +93,7 @@ export const cliCmd = (usage, callback) => {
     }
   };
 };
+
 /**
  * Ask a question to the user and return the answer
  * @param question {string} The question to ask
@@ -110,3 +111,55 @@ export const prompt = question =>
       resolve(answer);
     });
   });
+
+/**
+ * Ask a question to the user and return the key pressed.
+ * If the key is not in the possible answers, return the default value.
+ * @param question {string} The question to ask
+ * @param answers {Record<string, string>} The possible answers
+ * @param defaultValue {string} The default value
+ * @return {Promise<string>} The answer
+ */
+export const quickPrompt = async (question, answers, defaultValue) =>
+  new Promise((resolve, reject) => {
+    const answersArray = Object.entries(answers).map(([key, value]) => ({
+      answer: key,
+      input: value,
+    }));
+    const defaultAnswer = answersArray.find(a => a.input === defaultValue);
+    if (!defaultAnswer) {
+      reject(new Error('Default value must be in answer'));
+    }
+    process.stdout.write(question + ' ');
+    process.stdin.setRawMode(true);
+
+    const resolveValue = answer => {
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      process.stdout.write(
+        question.replace(/\?.*$/, '? ') + answer.answer + '\n',
+      );
+
+      process.stdin.removeListener('data', listener);
+      process.stdin.setRawMode(false);
+      process.stdin.pause();
+      resolve(answer.input);
+    };
+
+    const listener = key => {
+      const value = key.toString().toLowerCase();
+      const userAnswer =
+        answersArray.find(a => a.input === value) ?? defaultAnswer;
+      resolveValue(userAnswer);
+    };
+
+    process.stdin.on('data', listener);
+  });
+
+const answer = await quickPrompt(
+  'What do you want to do ? ' + color.gray('(o)verride/(r)etry/(A)bort '),
+  { override: 'o', retry: 'r', abort: 'a' },
+  'a',
+).then(answer => {
+  console.log(`Your answer is ${answer}`);
+});
