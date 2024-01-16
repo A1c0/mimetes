@@ -96,7 +96,9 @@ export const test = cliCmd('test', args => {
                   JSON.stringify(error.request.expectedResult.body),
                 );
                 fs.writeFileSync('actual.json', error.actualResponse.data);
-                console.log('expected.json and actual.json written to disk.');
+                console.log(
+                  'expected.json and actual.json are written to disk.',
+                );
               }
 
               if (interactive) {
