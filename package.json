@@ -13,7 +13,8 @@
     "lib/**/*.js",
     "app/**/*.{js,txt}",
     "bin/*.cjs",
-    "completions/mimetes-completion.nu"
+    "completions/mimetes-completion.nu",
+    "tmp/.gitkeep"
   ],
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",

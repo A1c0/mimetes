@@ -56,11 +56,12 @@ export class Writer {
     this.first = true;
     this.outputDir = outputDir;
     // Auto clean the tmp directory
-    fs.readdirSync(this.tmpDirPath).forEach(file => {
+    for (const file of fs.readdirSync(this.tmpDirPath)) {
       if (file.endsWith('.json')) {
         fs.unlinkSync(path.resolve(this.tmpDirPath, `${file}`));
       }
-    });
+    }
+
     this.writeStream = fs.createWriteStream(this.tmpFilePath);
     this.writeStream.write(`{\n${padding(1)}"timestamp": "${this.timestamp}",`);
     this.writeStream.write(`\n${padding(1)}"baseUrl": "${baseUrl}",`);

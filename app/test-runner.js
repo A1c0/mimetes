@@ -40,7 +40,7 @@ export class TestRunnerError extends Error {
 
 export async function testRequest(request, baseUrl, options) {
   const expectedResponse = request.expectedResult;
-  // eslint-disable-next-line no-await-in-loop
+
   const actualResponse = await httpRequest(
     baseUrl + request.url,
     request.method,

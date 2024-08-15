@@ -75,10 +75,11 @@ export const test = cliCmd('test', args => {
       } else {
         logger.log('\n' + file);
       }
+
       if (report.description) {
         logger.log(color.gray(report.description));
       }
-      // eslint-disable-next-line no-await-in-loop
+
       const baseUrl = args?.options.base ?? report.baseUrl;
       for (const request of report.requests) {
         let retry = true;
@@ -108,8 +109,7 @@ export const test = cliCmd('test', args => {
                   abort: 'a',
                 };
                 const answer = await quickPrompt(
-                  'What do you want to do ? ' +
-                    color.gray('(o)verride/(r)etry/(A)bort '),
+                  'What do you want to do ?',
                   POSSIBLE_ANSWERS,
                   'a',
                 );
@@ -118,9 +118,11 @@ export const test = cliCmd('test', args => {
                 if (retry) {
                   continue;
                 }
+
                 if (!override) {
                   exitLog('Test failed.');
                 }
+
                 request.expectedResult = {
                   statusCode: error.actualResponse.statusCode,
                   body: parseJson(error.actualResponse.data),
@@ -133,9 +135,11 @@ export const test = cliCmd('test', args => {
               exitLog(error.toString());
             }
           }
+
           retry = false;
         }
       }
+
       if (isReportModified) {
         fs.writeFileSync(file, JSON.stringify(report, null, 2));
       }

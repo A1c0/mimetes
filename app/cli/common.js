@@ -5,7 +5,7 @@ import * as readline from 'node:readline';
 import url from 'node:url';
 
 import { groupOptions, parsedArgs } from '../../lib/argv-parsing.js';
-import { color, logger } from '../../lib/console.js';
+import { color, hexColor, logger } from '../../lib/console.js';
 import { memoize } from '../../lib/memoize.js';
 import { regexMultiExec } from '../../lib/regex.js';
 
@@ -121,6 +121,7 @@ export const prompt = question =>
  * @return {Promise<string>} The answer
  */
 export const quickPrompt = async (question, answers, defaultValue) =>
+  // Todo l'aide à la réponse devrait être induite par les inputs
   new Promise((resolve, reject) => {
     const answersArray = Object.entries(answers).map(([key, value]) => ({
       answer: key,
@@ -130,14 +131,29 @@ export const quickPrompt = async (question, answers, defaultValue) =>
     if (!defaultAnswer) {
       reject(new Error('Default value must be in answer'));
     }
-    process.stdout.write(question + ' ');
+
+    const answerDescription = answersArray
+      .map(
+        a =>
+          `(${
+            a === defaultAnswer
+              ? a.answer[0].toUpperCase()
+              : a.answer[0].toLowerCase()
+          })${a.answer.slice(1)}`,
+      )
+      .join(', ');
+    process.stdout.write(
+      question.trim() + ' ' + color.gray(`${answerDescription}`),
+    );
     process.stdin.setRawMode(true);
 
     const resolveValue = answer => {
       process.stdout.clearLine(0);
       process.stdout.cursorTo(0);
       process.stdout.write(
-        question.replace(/\?.*$/, '? ') + answer.answer + '\n',
+        question.replace(/\?.*$/, '? ') +
+          hexColor('#a682ba')(answer.answer) +
+          '\n',
       );
 
       process.stdin.removeListener('data', listener);
@@ -153,13 +169,6 @@ export const quickPrompt = async (question, answers, defaultValue) =>
       resolveValue(userAnswer);
     };
 
+    process.stdin.resume();
     process.stdin.on('data', listener);
   });
-
-const answer = await quickPrompt(
-  'What do you want to do ? ' + color.gray('(o)verride/(r)etry/(A)bort '),
-  { override: 'o', retry: 'r', abort: 'a' },
-  'a',
-).then(answer => {
-  console.log(`Your answer is ${answer}`);
-});
