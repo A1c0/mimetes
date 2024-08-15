@@ -1,6 +1,6 @@
 {
   "name": "mimetes",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "bin": "bin/mimetes.cjs",
   "type": "module",
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
@@ -18,8 +18,8 @@
   ],
   "devDependencies": {
     "oletus": "^4.0.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.0.0",
-    "xo": "^0.56.0"
+    "xo": "^0.59.3"
   }
 }
