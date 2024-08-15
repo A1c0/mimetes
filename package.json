@@ -6,7 +6,7 @@
   "author": "Alexandre CONTASSOT <alexandrecontassot@hotmail.fr>",
   "license": "MIT",
   "scripts": {
-    "test": "ava test/*",
+    "test": "oletus test/*",
     "lint": "xo"
   },
   "files": [
