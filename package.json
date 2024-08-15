@@ -17,13 +17,9 @@
     "tmp/.gitkeep"
   ],
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "ava": "^5.3.1",
     "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "^4.0.0",
     "xo": "^0.56.0"
-  },
-  "volta": {
-    "node": "18.17.1",
-    "yarn": "4.0.0-rc.50"
   }
 }
