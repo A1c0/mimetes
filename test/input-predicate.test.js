@@ -1,4 +1,4 @@
-import test from 'ava';
+import test from 'oletus';
 
 import {
   bundleGlobPathPredicate,
@@ -7,26 +7,26 @@ import {
 
 test('invalidate methods not allowed', t => {
   const isMethodAllowed = bundleMethodPredicate(undefined, ['POST', 'OPTIONS']);
-  t.is(isMethodAllowed('POST'), false);
-  t.is(isMethodAllowed('OPTIONS'), false);
-  t.is(isMethodAllowed('GET'), true);
-  t.is(isMethodAllowed('PUT'), true);
+  t.deepEqual(isMethodAllowed('POST'), false);
+  t.deepEqual(isMethodAllowed('OPTIONS'), false);
+  t.deepEqual(isMethodAllowed('GET'), true);
+  t.deepEqual(isMethodAllowed('PUT'), true);
 });
 
 test('validate only methods allowed', t => {
   const isMethodAllowed = bundleMethodPredicate(['POST', 'OPTIONS'], undefined);
-  t.is(isMethodAllowed('POST'), true);
-  t.is(isMethodAllowed('OPTIONS'), true);
-  t.is(isMethodAllowed('GET'), false);
-  t.is(isMethodAllowed('PUT'), false);
+  t.deepEqual(isMethodAllowed('POST'), true);
+  t.deepEqual(isMethodAllowed('OPTIONS'), true);
+  t.deepEqual(isMethodAllowed('GET'), false);
+  t.deepEqual(isMethodAllowed('PUT'), false);
 });
 
 test('validate only methods allowed and not excluded', t => {
   const isMethodAllowed = bundleMethodPredicate(['POST', 'OPTIONS'], ['GET']);
-  t.is(isMethodAllowed('POST'), true);
-  t.is(isMethodAllowed('OPTIONS'), true);
-  t.is(isMethodAllowed('GET'), false);
-  t.is(isMethodAllowed('PUT'), false);
+  t.deepEqual(isMethodAllowed('POST'), true);
+  t.deepEqual(isMethodAllowed('OPTIONS'), true);
+  t.deepEqual(isMethodAllowed('GET'), false);
+  t.deepEqual(isMethodAllowed('PUT'), false);
 });
 
 test('invalidate paths not allowed', t => {
@@ -34,24 +34,24 @@ test('invalidate paths not allowed', t => {
     '/**/health',
     '/client/**/cars/*',
   ]);
-  t.is(isPathAllowed('/health'), false);
-  t.is(isPathAllowed('/client'), true);
-  t.is(isPathAllowed('/client/cars'), true);
-  t.is(isPathAllowed('/client/cars/2'), false);
-  t.is(isPathAllowed('/client/bus/2'), true);
+  t.deepEqual(isPathAllowed('/health'), false);
+  t.deepEqual(isPathAllowed('/client'), true);
+  t.deepEqual(isPathAllowed('/client/cars'), true);
+  t.deepEqual(isPathAllowed('/client/cars/2'), false);
+  t.deepEqual(isPathAllowed('/client/bus/2'), true);
 });
 test('validate only paths allowed', t => {
   const isPathAllowed = bundleGlobPathPredicate(
     ['/client/**/cars/**', '/client/**/bus/*'],
     undefined,
   );
-  t.is(isPathAllowed('/'), false);
-  t.is(isPathAllowed('/any/things'), false);
-  t.is(isPathAllowed('/client'), false);
-  t.is(isPathAllowed('/client/cars'), false);
-  t.is(isPathAllowed('/client/cars/'), true);
-  t.is(isPathAllowed('/client/cars/2'), true);
-  t.is(isPathAllowed('/client/bus/2'), true);
+  t.deepEqual(isPathAllowed('/'), false);
+  t.deepEqual(isPathAllowed('/any/things'), false);
+  t.deepEqual(isPathAllowed('/client'), false);
+  t.deepEqual(isPathAllowed('/client/cars'), false);
+  t.deepEqual(isPathAllowed('/client/cars/'), true);
+  t.deepEqual(isPathAllowed('/client/cars/2'), true);
+  t.deepEqual(isPathAllowed('/client/bus/2'), true);
 });
 
 test('validate only paths allowed and not excluded', t => {
@@ -59,12 +59,12 @@ test('validate only paths allowed and not excluded', t => {
     ['/client/**/cars/**', '/client/**/bus/*'],
     ['/client/**/cars/2'],
   );
-  t.is(isPathAllowed('/'), false);
-  t.is(isPathAllowed('/any/things'), false);
-  t.is(isPathAllowed('/client'), false);
-  t.is(isPathAllowed('/client/cars'), false);
-  t.is(isPathAllowed('/client/cars/'), true);
-  t.is(isPathAllowed('/client/cars/1'), true);
-  t.is(isPathAllowed('/client/cars/2'), false);
-  t.is(isPathAllowed('/client/bus/2'), true);
+  t.deepEqual(isPathAllowed('/'), false);
+  t.deepEqual(isPathAllowed('/any/things'), false);
+  t.deepEqual(isPathAllowed('/client'), false);
+  t.deepEqual(isPathAllowed('/client/cars'), false);
+  t.deepEqual(isPathAllowed('/client/cars/'), true);
+  t.deepEqual(isPathAllowed('/client/cars/1'), true);
+  t.deepEqual(isPathAllowed('/client/cars/2'), false);
+  t.deepEqual(isPathAllowed('/client/bus/2'), true);
 });

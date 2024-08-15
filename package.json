@@ -17,7 +17,7 @@
     "tmp/.gitkeep"
   ],
   "devDependencies": {
-    "ava": "^5.3.1",
+    "oletus": "^4.0.0",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^4.0.0",
     "xo": "^0.56.0"

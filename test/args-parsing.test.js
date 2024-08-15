@@ -1,4 +1,4 @@
-import test from 'ava';
+import test from 'oletus';
 
 import { groupOptions, parsedArgs } from '../lib/argv-parsing.js';
 

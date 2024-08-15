@@ -1,4 +1,4 @@
-import test from 'ava';
+import test from 'oletus';
 
 import { deepEqual } from '../lib/equals.js';
 
@@ -7,7 +7,7 @@ test('test is object are deep equal', t => {
     { foo: 'bar', baz: ['qux'] },
     { foo: 'bar', baz: ['qux'] },
   );
-  t.is(diff, undefined);
+  t.deepEqual(diff, undefined);
 });
 
 test('test is object are not deep equal', t => {
@@ -15,7 +15,7 @@ test('test is object are not deep equal', t => {
     { foo: 'bar', baz: ['qux'] },
     { foo: 'bar', baz: ['quux'] },
   );
-  t.true(diff.length > 0);
+  t.deepEqual(diff.length > 0, true);
 });
 
 test('test is object are equal with ignored props', t => {
@@ -35,6 +35,6 @@ test('test is object are equal with ignored props', t => {
       baz: ['qux'],
     },
   };
-  t.true(deepEqual(actual, expected).length > 0);
-  t.is(deepEqual(actual, expected, ['ignored']), undefined);
+  t.deepEqual(deepEqual(actual, expected).length > 0, true);
+  t.deepEqual(deepEqual(actual, expected, ['ignored']), undefined);
 });
